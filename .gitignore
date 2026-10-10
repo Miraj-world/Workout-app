@@ -7,4 +7,11 @@ local.properties
 gradle.properties
 verification/*.log
 verification/*-ui.xml
-verification/custom-exercise.png
+# Screenshots stay local. App images under res/ are still tracked.
+*.png
+*.jpg
+*.jpeg
+*.webp
+!app/src/main/res/**/*.png
+!app/src/main/res/**/*.jpg
+!app/src/main/res/**/*.webp

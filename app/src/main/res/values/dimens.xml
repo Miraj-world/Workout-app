@@ -1,0 +1,4 @@
+<resources>
+    <!-- Matches the 64dp row_image in row_workout.xml. -->
+    <dimen name="thumbnail_size">64dp</dimen>
+</resources>

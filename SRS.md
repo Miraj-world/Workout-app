@@ -1,7 +1,7 @@
 # Software Requirements Specification
 ## Workout Log Android Application
 
-**Version:** 1.0 — Draft for group review  
+**Version:** 1.1 — Draft for group review (adds Section 10, Course requirement additions)  
 **Course:** CS 533  
 **Date:** October 8, 2026  
 **Group members:** To be confirmed  
@@ -185,3 +185,49 @@ We will consider the first version complete when all required features are imple
 3. Approval of one exercise per workout entry and a fixed pounds unit.
 4. Final built-in exercise images, their source, and permission to use them.
 5. Final project toolchain and the group's shared test environment.
+
+## 10. Course requirement additions
+
+The course requires at least one fragment and a data visualization. The requirements below extend Sections 3 to 7. FR-01 to FR-21, NFR-01 to NFR-09 and AT-01 to AT-17 are unchanged; the Workout History screen in Section 4.1 is now the History tab.
+
+### 10.1 Functional Requirements
+
+| ID | Requirement |
+|---|---|
+| FR-22 | The main screen shall show a two-button tab bar, History and Progress, under the title, and switch between two fragments. The History tab shall contain the existing history list, empty state, and workout count. The Add Workout button shall remain visible on both tabs. The selected tab shall be visibly highlighted, announced by screen readers, and kept after screen rotation without duplicating content. Tab buttons shall be at least 48 dp tall. |
+| FR-23 | The Progress tab shall show: (a) summary tiles for total workouts, workouts in the last 7 days, the current streak, and the number of exercises used; (b) a line chart of the heaviest weight on each workout date for one exercise chosen from a dropdown that lists exercises with at least one weighted entry; (c) a bar chart of workouts per week for the last 8 weeks; (d) a horizontal bar chart of total volume for the top 5 exercises; and (e) personal records listing the heaviest weight per exercise and its date, heaviest first. Each chart shall show a short message when there is not enough data. The tab shall scroll, show a loading indicator while it calculates, and refresh when it is shown again and whenever workouts change. |
+| FR-24 | The History tab shall offer Load sample data, which after confirmation adds about 1,000 realistic workouts over the last 6 months using the existing exercises, in a single all-or-nothing save. It shall also offer Delete all workouts, which after a confirmation that states exercises are kept, removes every workout entry. Both actions shall refresh both tabs. |
+
+### 10.2 Definitions used by the Progress tab
+- **Workout:** one workout entry, as in Section 1.3. Totals and weekly counts count entries.
+- **Last 7 days:** today and the six days before it.
+- **Current streak:** the number of consecutive days with at least one workout, ending today, or ending yesterday if nothing has been logged today. Otherwise 0.
+- **Week:** Monday through Sunday. The last 8 weeks end with the week that contains today.
+- **Volume:** sets × repetitions × weight, in pounds. A blank weight counts as zero volume, so bodyweight-only exercises do not appear in the volume chart.
+- **Heaviest weight:** blank weights are skipped; zero is a recorded weight. A personal record's date is the first date that weight was reached.
+- **Enough data:** the line chart needs at least two dated points; a bar chart needs at least one value above zero.
+
+### 10.3 Nonfunctional notes
+- Progress calculations and sample-data inserts run off the main thread and stop when the screen closes; a sample-data load that is interrupted saves nothing.
+- History list thumbnails are decoded at row size and cached, in support of NFR-02 and NFR-06.
+- The additions use no network access, no new permissions, and no third-party libraries (NFR-07, FR-19).
+
+### 10.4 Acceptance Tests
+
+| ID | Scenario and steps | Expected Result |
+|---|---|---|
+| AT-18 | Open the app. Tap Progress, then History. Repeat with TalkBack on. | The tapped tab is filled green and the other is pale; the title changes between Workout History and Your Progress; TalkBack announces "Progress tab selected" or "History tab selected" and reads the selected state. Add Workout is visible on both tabs. |
+| AT-19 | Select Progress, choose an exercise in the weight dropdown, then rotate the device and rotate back. | Progress stays selected and the chosen exercise is still shown. Each list and chart appears once, with no duplicated content. |
+| AT-20 | On the History tab, repeat AT-01, AT-07, AT-11 and AT-12. | Behavior is unchanged: ordering, count, empty state, and opening details all work inside the tab. |
+| AT-21 | Delete all workouts, then open Progress. | All four tiles show 0; each chart shows its empty-state message; Personal records shows its empty message; nothing crashes. |
+| AT-22 | With no workouts, add workouts dated today (two entries), yesterday, and 5 days ago, using two different exercises. Open Progress. | Total workouts 4; Last 7 days 4; Day streak 2; Exercises used 2. |
+| AT-23 | Add Bench Press entries: 100 lb and 120 lb on one date, 130 lb on a later date, and one with a blank weight. Add a Push-up entry with a blank weight. Open Progress and pick Bench Press. | The dropdown lists Bench Press but not Push-up. The line chart shows two points, 120 and 130, with dots and labelled axes. An exercise with weights on only one date shows the "at least two dates" message. |
+| AT-24 | Add workouts on a Sunday and on the following Monday, then view Workouts per week. | Eight bars, labelled by the Monday that starts each week. The Sunday entry counts in the earlier week and the Monday entry in the later week. Bar values are printed on the bars. |
+| AT-25 | Load sample data, then view Top exercises by volume and Personal records. | At most 5 bars, largest first, with values at the bar ends and gridlines at rounded steps. Records list each weighted exercise once, heaviest first, with the date. Push-up (blank weight) is not in either list. |
+| AT-26 | Tap Load sample data and choose Cancel. Tap it again and choose Load. | Cancel adds nothing. Load shows a progress indicator, then a message that 1,000 sample workouts were loaded. Existing workouts are kept, and both tabs show the new data. History loads within the NFR-02 two-second target. |
+| AT-27 | Tap Delete all workouts and choose Cancel; then repeat and confirm. Open Add Workout. | Cancel keeps every workout. Confirm removes all workouts; History shows the empty state; Progress shows its empty states; the dropdown still contains every built-in and custom exercise. |
+| AT-28 | With Progress data showing, add, edit, and delete a workout through the normal screens, returning to Progress each time. | Tiles, charts, and records update after each change. |
+| AT-29 | Create a custom exercise with a large photo, load sample data, add a few workouts for that exercise, and scroll History quickly. Open one entry. | Rows show the small image and scrolling stays smooth; the details screen still shows the larger image. |
+| AT-30 | Turn on TalkBack and move through the Progress tab. Also check with the largest font size. | Each tile reads as one item (for example "Total workouts: 1,000"); each chart reads a summary of its data or its empty message; each record reads as one item. The tab scrolls and nothing is cut off. |
+| AT-31 | Enable airplane mode and repeat AT-18, AT-26 and AT-27. Inspect the merged manifest. | Everything works offline. The manifest declares no permissions; allowBackup is false; only the launcher activity is exported. |
+
