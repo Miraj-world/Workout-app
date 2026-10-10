@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Workout Log</string>
+    <string name="history_title">Workout History</string>
+    <string name="history_subtitle">One exercise at a time. Every workout counts.</string>
+    <string name="add_workout">Add Workout</string>
+    <string name="empty_title">Your first workout starts here</string>
+    <string name="empty_body">Log an exercise, your sets and repetitions. Your history stays on this device.</string>
+    <string name="exercise">Exercise</string>
+    <string name="choose_exercise">Choose an exercise</string>
+    <string name="add_exercise">＋ Add New Exercise</string>
+    <string name="date">Workout date</string>
+    <string name="sets">Sets</string>
+    <string name="reps">Repetitions per set</string>
+    <string name="weight">Weight (lb) · optional</string>
+    <string name="notes">Notes · optional</string>
+    <string name="save">Save Workout</string>
+    <string name="cancel">Cancel</string>
+    <string name="name">Exercise name</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="remove_image">Remove Image</string>
+    <string name="save_exercise">Save Exercise</string>
+    <string name="image_help">Choose an image from your device, or use the default icon.</string>
+    <string name="offline">Saved on your device · Works offline</string>
+    <string name="edit">Edit Workout</string>
+    <string name="delete">Delete Workout</string>
+    <string name="back">Back</string>
+</resources>

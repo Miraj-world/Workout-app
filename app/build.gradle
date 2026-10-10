@@ -1,0 +1,17 @@
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion 23
+    buildToolsVersion '27.0.3'
+    defaultConfig {
+        applicationId 'com.cs533.workoutlog'
+        minSdkVersion 23
+        targetSdkVersion 27
+        versionCode 1
+        versionName '1.0'
+        testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}

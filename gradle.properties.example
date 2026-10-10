@@ -1,0 +1,3 @@
+org.gradle.jvmargs=-Xmx1536m
+# Copy this file to gradle.properties and set your own Java 8 installation path.
+# org.gradle.java.home=C:/path/to/jdk8
