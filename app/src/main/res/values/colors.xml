@@ -1,1 +1,17 @@
-<resources><color name="page_background">#F5F7F4</color></resources>
+<resources>
+    <color name="page_background">#F5F7F4</color>
+    <color name="brand">#176B5B</color>
+    <color name="brand_dark">#104D42</color>
+    <color name="text_primary">#183E34</color>
+    <color name="text_secondary">#536A62</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="card_border">#DEE8E0</color>
+    <color name="tab_idle_background">#E3ECE7</color>
+    <color name="danger">#A12B2B</color>
+    <color name="chart_line">#176B5B</color>
+    <color name="chart_bar">#2E8B74</color>
+    <color name="chart_grid">#E1E8E3</color>
+    <color name="chart_axis">#9AADA5</color>
+    <color name="chart_label">#536A62</color>
+    <color name="chart_value">#183E34</color>
+</resources>

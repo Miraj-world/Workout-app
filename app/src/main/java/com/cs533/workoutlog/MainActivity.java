@@ -1,42 +1,86 @@
 package com.cs533.workoutlog;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.Button;
 import android.widget.TextView;
-import java.util.List;
 
+/** Hosts the History and Progress tabs (FR-22) and the shared Add Workout action. */
 public class MainActivity extends BaseActivity {
-    private List<WorkoutDb.Workout> workouts;
-    @Override protected void onCreate(Bundle state) {
-        super.onCreate(state);setContentView(R.layout.activity_history);
-        findViewById(R.id.add_workout).setOnClickListener(v->startActivity(new Intent(this,WorkoutFormActivity.class)));
-        ListView list=view(R.id.history_list);
-        list.setEmptyView(findViewById(R.id.empty));
-        list.setOnItemClickListener((parent,v,position,id)->startActivity(new Intent(this,DetailActivity.class).putExtra("id",workouts.get(position).id)));
+    static final int TAB_HISTORY = 0;
+    static final int TAB_PROGRESS = 1;
+    private static final String STATE_TAB = "tab";
+    private static final String TAG_HISTORY = "history";
+    private static final String TAG_PROGRESS = "progress";
+
+    final Worker worker = new Worker();
+    private HistoryFragment history;
+    private ProgressFragment progress;
+    private Button historyTab;
+    private Button progressTab;
+    private int tab;
+
+    @Override
+    protected void onCreate(Bundle state) {
+        super.onCreate(state);
+        setContentView(R.layout.activity_history);
+        findViewById(R.id.add_workout).setOnClickListener(v -> startActivity(new Intent(this, WorkoutFormActivity.class)));
+        historyTab = view(R.id.tab_history);
+        progressTab = view(R.id.tab_progress);
+        historyTab.setOnClickListener(v -> select(TAB_HISTORY, true));
+        progressTab.setOnClickListener(v -> select(TAB_PROGRESS, true));
+
+        FragmentManager fragments = getFragmentManager();
+        // After rotation the FragmentManager restores both fragments itself; adding them again would duplicate them.
+        if (state == null) {
+            fragments.beginTransaction()
+                    .add(R.id.tab_content, new HistoryFragment(), TAG_HISTORY)
+                    .add(R.id.tab_content, new ProgressFragment(), TAG_PROGRESS)
+                    .commit();
+            fragments.executePendingTransactions();
+        }
+        history = (HistoryFragment) fragments.findFragmentByTag(TAG_HISTORY);
+        progress = (ProgressFragment) fragments.findFragmentByTag(TAG_PROGRESS);
+        select(state == null ? TAB_HISTORY : state.getInt(STATE_TAB, TAB_HISTORY), false);
     }
-    @Override protected void onResume() {
-        super.onResume();
-        try {
-            workouts=db.workouts();
-            ((TextView)findViewById(R.id.history_count)).setText(workouts.size()+ (workouts.size()==1?" workout recorded":" workouts recorded"));
-            ((ListView)findViewById(R.id.history_list)).setAdapter(new BaseAdapter(){
-                public int getCount(){return workouts.size();} public Object getItem(int p){return workouts.get(p);} public long getItemId(int p){return workouts.get(p).id;}
-                public View getView(int p,View old,ViewGroup parent){
-                    View row=old==null?LayoutInflater.from(MainActivity.this).inflate(R.layout.row_workout,parent,false):old;
-                    WorkoutDb.Workout w=workouts.get(p);
-                    ((TextView)row.findViewById(R.id.row_name)).setText(w.name);
-                    ((TextView)row.findViewById(R.id.row_date)).setText(w.date);
-                    ((TextView)row.findViewById(R.id.row_summary)).setText(w.sets+" sets  ·  "+w.reps+" reps"+(w.weight.isEmpty()?"":"  ·  "+w.weight+" lb"));
-                    Images.show(MainActivity.this,(ImageView)row.findViewById(R.id.row_image),w.image,w.name);
-                    return row;
-                }
-            });
-        } catch(RuntimeException e){message("Could not load workout history. Please reopen the app.");}
+
+    int selectedTab() {
+        return tab;
+    }
+
+    void select(int newTab, boolean announce) {
+        tab = newTab;
+        boolean showHistory = newTab == TAB_HISTORY;
+        getFragmentManager().beginTransaction()
+                .show(showHistory ? history : progress)
+                .hide(showHistory ? progress : history)
+                .commit();
+        historyTab.setSelected(showHistory);
+        progressTab.setSelected(!showHistory);
+        ((TextView) findViewById(R.id.page_title)).setText(showHistory ? R.string.history_title : R.string.progress_title);
+        if (announce) {
+            String name = getString(showHistory ? R.string.tab_history : R.string.tab_progress);
+            findViewById(R.id.tab_bar).announceForAccessibility(getString(R.string.tab_selected_announcement, name));
+        }
+    }
+
+    /** Called after sample data is loaded or all workouts are deleted (FR-24). */
+    void workoutsChanged() {
+        history.refresh();
+        progress.refresh();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        state.putInt(STATE_TAB, tab);
+        super.onSaveInstanceState(state);
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Fragments cancel their own tasks first; wait for the running one before BaseActivity closes the database.
+        worker.shutdown();
+        super.onDestroy();
     }
 }

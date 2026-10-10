@@ -12,4 +12,8 @@
     <style name="FieldLabel"><item name="android:textSize">14sp</item><item name="android:textStyle">bold</item><item name="android:textColor">#294F44</item><item name="android:layout_marginTop">14dp</item></style>
     <style name="PrimaryButton" parent="android:style/Widget.Material.Button"><item name="android:backgroundTint">#176B5B</item><item name="android:textColor">#FFFFFF</item><item name="android:minHeight">48dp</item><item name="android:textAllCaps">false</item></style>
     <style name="SecondaryButton" parent="android:style/Widget.Material.Button.Borderless"><item name="android:textColor">#176B5B</item><item name="android:minHeight">48dp</item><item name="android:textAllCaps">false</item></style>
+    <style name="Tab" parent="android:style/Widget.Material.Button.Borderless"><item name="android:background">@drawable/tab_background</item><item name="android:textColor">@color/tab_text</item><item name="android:minHeight">48dp</item><item name="android:textAllCaps">false</item><item name="android:textSize">16sp</item><item name="android:textStyle">bold</item></style>
+    <style name="SectionTitle"><item name="android:textSize">18sp</item><item name="android:textStyle">bold</item><item name="android:textColor">@color/text_primary</item><item name="android:layout_marginTop">20dp</item><item name="android:layout_marginBottom">8dp</item></style>
+    <style name="TileValue"><item name="android:textSize">26sp</item><item name="android:textStyle">bold</item><item name="android:textColor">@color/brand</item></style>
+    <style name="TileLabel"><item name="android:textSize">13sp</item><item name="android:textColor">@color/text_secondary</item><item name="android:paddingTop">2dp</item></style>
 </resources>

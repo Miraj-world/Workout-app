@@ -20,8 +20,62 @@
     <string name="remove_image">Remove Image</string>
     <string name="save_exercise">Save Exercise</string>
     <string name="image_help">Choose an image from your device, or use the default icon.</string>
-    <string name="offline">Saved on your device · Works offline</string>
     <string name="edit">Edit Workout</string>
     <string name="delete">Delete Workout</string>
     <string name="back">Back</string>
+
+    <!-- FR-22 tabs -->
+    <string name="progress_title">Your Progress</string>
+    <string name="tab_history">History</string>
+    <string name="tab_progress">Progress</string>
+    <string name="tab_history_description">History tab</string>
+    <string name="tab_progress_description">Progress tab</string>
+    <string name="tab_selected_announcement">%1$s tab selected</string>
+    <plurals name="workouts_recorded">
+        <item quantity="one">%1$s workout recorded</item>
+        <item quantity="other">%1$s workouts recorded</item>
+    </plurals>
+
+    <!-- FR-23 progress tab -->
+    <string name="progress_loading">Loading your progress…</string>
+    <string name="progress_load_failed">Could not load your progress. Please try again.</string>
+    <string name="stat_total">Total workouts</string>
+    <string name="stat_last_seven">Last 7 days</string>
+    <string name="stat_streak">Day streak</string>
+    <string name="stat_exercises">Exercises used</string>
+    <string name="stat_tile_description">%1$s: %2$s</string>
+    <string name="chart_weight_title">Heaviest weight per workout date</string>
+    <string name="chart_weight_exercise">Exercise for weight chart</string>
+    <string name="chart_weight_empty">Log this exercise with a weight on at least two dates to see a trend.</string>
+    <string name="chart_weight_no_exercises">Add a weight to a workout to see your weight trend.</string>
+    <string name="chart_weight_description">Line chart of the heaviest %1$s weight on each of %2$d workout dates, from %3$s lb on %4$s to %5$s lb on %6$s. Highest %7$s lb.</string>
+    <string name="chart_weekly_title">Workouts per week</string>
+    <string name="chart_weekly_subtitle">Last 8 weeks, weeks start Monday</string>
+    <string name="chart_weekly_empty">No workouts in the last 8 weeks.</string>
+    <string name="chart_weekly_description">Bar chart of workouts per week for the last 8 weeks. %1$s.</string>
+    <string name="chart_volume_title">Top exercises by volume</string>
+    <string name="chart_volume_subtitle">Sets × reps × weight, in lb</string>
+    <string name="chart_volume_empty">Add workouts with a weight to see training volume.</string>
+    <string name="chart_volume_description">Horizontal bar chart of total volume for the top exercises. %1$s.</string>
+    <string name="chart_point_description">%1$s: %2$s</string>
+    <string name="records_title">Personal records</string>
+    <string name="records_empty">No weighted workouts yet. Records appear here after you log a weight.</string>
+    <string name="record_value">%1$s lb</string>
+    <string name="record_description">%1$s record: %2$s lb on %3$s</string>
+
+    <!-- FR-24 sample data -->
+    <string name="load_sample">Load sample data</string>
+    <string name="delete_all">Delete all workouts</string>
+    <string name="load_sample_title">Load sample data?</string>
+    <string name="load_sample_message">This adds about 1,000 example workouts from the last 6 months using your existing exercises. Your current workouts are kept.</string>
+    <string name="load_sample_confirm">Load</string>
+    <string name="delete_all_title">Delete all workouts?</string>
+    <string name="delete_all_message">Every workout entry will be removed. Your exercises are kept in the dropdown. This cannot be undone.</string>
+    <string name="delete_all_confirm">Delete all</string>
+    <string name="sample_loaded">Loaded %1$s sample workouts</string>
+    <string name="sample_failed">Could not load sample data. No workouts were added.</string>
+    <string name="all_deleted">Deleted %1$s workouts. Exercises were kept.</string>
+    <string name="delete_all_failed">Could not delete workouts. Please try again.</string>
+    <string name="history_load_failed">Could not load workout history. Please reopen the app.</string>
+    <string name="working">Working…</string>
 </resources>

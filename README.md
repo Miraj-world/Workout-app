@@ -36,6 +36,10 @@ The first build on a teammate's machine may need internet access; omit `--offlin
 - Case-insensitive duplicate exercise protection and field validation.
 - Form state retained during rotation and discard confirmation for unsaved changes.
 - No accounts, internet permission, analytics, or cloud services.
+- History and Progress tabs built with framework fragments; the selected tab survives rotation.
+- A Progress tab with summary tiles (total workouts, last 7 days, current streak, exercises used), a heaviest-weight line chart per exercise, a workouts-per-week bar chart (last 8 weeks), a top-5 volume chart, and personal records. All charts are drawn with Canvas; there is no chart library.
+- Load sample data (1,000 realistic workouts over the last 6 months, inserted in one transaction) and Delete all workouts (exercises are kept), both behind confirmation dialogs.
+- Small cached thumbnails for history rows, so custom images are no longer decoded at full size in the list.
 
 Each entry records one exercise with the same repetitions and weight for all sets. Custom exercise editing/deletion, animations, per-set values, and cloud backup are outside version 1.
 
@@ -45,15 +49,21 @@ Each entry records one exercise with the same repetitions and weight for all set
 |---|---|
 | `WorkoutDb.java` | Exercise and workout tables, seeds, queries, and persistence |
 | `Validation.java` | Date, number, weight, and length checks |
-| `MainActivity.java` | History and navigation |
+| `MainActivity.java` | Tab bar, fragment hosting, Add Workout, and the shared background worker |
+| `HistoryFragment.java` | History tab: list, empty state, count, Load sample data, and Delete all workouts |
+| `ProgressFragment.java` | Progress tab: tiles, charts, and personal records, loaded off the UI thread |
+| `ChartView.java` | Reusable Canvas chart: line, vertical bar, and horizontal bar, with gridlines, labels, and empty states |
+| `Stats.java` | Pure-Java statistics (streak, weekly counts, volume, records, heaviest per date) with no Android imports |
+| `SampleData.java` | Generates the 1,000 demonstration workouts with weight progression |
+| `Worker.java` | Single background thread for database work; results are posted to the UI thread and cancelled in onDestroy |
 | `WorkoutFormActivity.java` | Add/edit entry, dropdown, date picker, and rotation state |
 | `ExerciseFormActivity.java` | New exercise and image selection |
 | `DetailActivity.java` | Entry details, edit, and confirmed deletion |
-| `Images.java` | Bounded image decoding, private copy, and fallback icon |
+| `Images.java` | Bounded image decoding, private copy, fallback icon, and cached list thumbnails |
 | `res/layout` | XML screen layouts |
 | `res/drawable` | Original vector exercise illustrations and card background |
 
-The resource-generation script is retained in `verification/generate_resources.py` for provenance. Edit XML directly during normal development; running that script replaces the initial layouts and illustrations.
+The resource-generation script is retained in `verification/generate_resources.py` for provenance. Edit XML directly during normal development; running that script replaces the initial layouts and illustrations, and it would now overwrite the tabbed `activity_history.xml` with the original single-screen version. Do not run it.
 
 ## Device tests
 
@@ -64,9 +74,9 @@ adb install -r .\app\build\outputs\apk\androidTest\debug\app-debug-androidTest.a
 adb shell am instrument -w com.cs533.workoutlog.test/android.test.InstrumentationTestRunner
 ```
 
-The data tests use a separate disposable database. Screen tests temporarily add and clean up their own records in the app database. Use a development emulator for testing.
+The data, statistics, and progress-data tests use separate disposable databases. Screen tests temporarily add and clean up their own records in the app database; the tab test only reads it. Use a development emulator for testing.
 
-The test summary, walkthrough scripts, and selected screenshots are in `verification`. Generated build logs, runtime logs, and UI dumps remain local and are excluded from Git. The entire SRS acceptance matrix is a final project checklist; passing the automated tests does not by itself establish complete accessibility or all device compatibility.
+The test summary and walkthrough scripts are in `verification`. Screenshots (any `.png`, `.jpg` or `.webp` outside `app/src/main/res`), build logs, runtime logs, and UI dumps remain local and are excluded from Git. The entire SRS acceptance matrix is a final project checklist; passing the automated tests does not by itself establish complete accessibility or all device compatibility.
 
 ## Artwork
 

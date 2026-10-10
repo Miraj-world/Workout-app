@@ -67,4 +67,66 @@ public class WorkoutDb extends SQLiteOpenHelper {
         } return result;
     }
     public void delete(long id) { if(getWritableDatabase().delete("workouts","_id=?",new String[]{String.valueOf(id)})!=1) throw new IllegalStateException("Entry no longer exists."); }
+
+    /** Lets a long write stop early; the whole transaction is then rolled back. */
+    public interface Cancel {
+        boolean cancelled();
+    }
+
+    public int workoutCount() {
+        try (Cursor c = getReadableDatabase().rawQuery("SELECT COUNT(*) FROM workouts", null)) {
+            return c.moveToFirst() ? c.getInt(0) : 0;
+        }
+    }
+
+    /** Every workout as a plain row for {@link Stats}, oldest first. Blank weight stays null. */
+    public List<Stats.Row> statRows() {
+        List<Stats.Row> result = new ArrayList<>();
+        String sql = "SELECT w.date,e.name,w.sets,w.reps,w.weight FROM workouts w JOIN exercises e ON e._id=w.exercise_id ORDER BY w.date,w.created_at,w._id";
+        try (Cursor c = getReadableDatabase().rawQuery(sql, null)) {
+            while (c.moveToNext()) {
+                result.add(new Stats.Row(c.getString(0), c.getString(1), c.getInt(2), c.getInt(3), c.isNull(4) ? null : c.getString(4)));
+            }
+        }
+        return result;
+    }
+
+    /** Exercises with at least one workout that has a weight, sorted by name, for the Progress chart dropdown. */
+    public List<Exercise> weightedExercises() {
+        List<Exercise> result = new ArrayList<>();
+        String sql = "SELECT e._id,e.name,e.image FROM exercises e WHERE EXISTS (SELECT 1 FROM workouts w WHERE w.exercise_id=e._id AND w.weight IS NOT NULL AND TRIM(w.weight)<>'') ORDER BY e.name COLLATE NOCASE";
+        try (Cursor c = getReadableDatabase().rawQuery(sql, null)) {
+            while (c.moveToNext()) {
+                result.add(new Exercise(c.getLong(0), c.getString(1), c.getString(2)));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Inserts sample workouts in one transaction through {@link #save}, so each entry gets
+     * the normal validation. Any failure or cancellation rolls back every entry.
+     */
+    public int insertSampleData(List<SampleData.Entry> entries, Cancel cancel) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (SampleData.Entry e : entries) {
+                if (cancel.cancelled()) {
+                    throw new IllegalStateException("Cancelled");
+                }
+                save(0, e.exerciseId, e.date, e.sets, e.reps, e.weight, e.notes);
+            }
+            db.setTransactionSuccessful();
+            return entries.size();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    /** Removes every workout entry. Exercises, including custom ones, are kept (FR-18). */
+    public int deleteAllWorkouts() {
+        // "1" makes delete() return the number of rows removed.
+        return getWritableDatabase().delete("workouts", "1", null);
+    }
 }
