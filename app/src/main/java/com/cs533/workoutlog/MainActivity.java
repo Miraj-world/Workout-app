@@ -51,6 +51,9 @@ public class MainActivity extends BaseActivity {
 
     void select(int newTab, boolean announce) {
         tab = newTab;
+        if (history == null || progress == null) {
+            return;
+        }
         boolean showHistory = newTab == TAB_HISTORY;
         getFragmentManager().beginTransaction()
                 .show(showHistory ? history : progress)
@@ -80,7 +83,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         // Fragments cancel their own tasks first; wait for the running one before BaseActivity closes the database.
-        worker.shutdown();
         super.onDestroy();
+        worker.shutdown();
     }
 }
