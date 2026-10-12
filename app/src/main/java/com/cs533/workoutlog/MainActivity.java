@@ -82,8 +82,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        // Fragments cancel their own tasks first; wait for the running one before BaseActivity closes the database.
-        super.onDestroy();
+        // BaseActivity closes the database before dispatching fragment destruction.
+        // Stop background database work and remove its callbacks before that happens.
         worker.shutdown();
+        super.onDestroy();
     }
 }

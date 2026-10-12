@@ -12,6 +12,41 @@ import java.util.Locale;
 
 /** FR-22 tabs: switching, rotation keeping the selected tab, and no duplicate fragments. Reads the app database without changing it. */
 public class TabTests extends InstrumentationTestCase {
+    public void testWorkerStopsBeforeDatabaseCloses() throws Exception {
+        Intent intent = new Intent(getInstrumentation().getTargetContext(), MainActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        MainActivity main = (MainActivity) getInstrumentation().startActivitySync(intent);
+        java.util.concurrent.CountDownLatch started = new java.util.concurrent.CountDownLatch(1);
+        java.util.concurrent.CountDownLatch stopped = new java.util.concurrent.CountDownLatch(1);
+        java.util.concurrent.atomic.AtomicBoolean openAtStop = new java.util.concurrent.atomic.AtomicBoolean();
+        android.database.sqlite.SQLiteDatabase database = main.db.getReadableDatabase();
+        ui(() -> main.worker.submit(task -> {
+            started.countDown();
+            try {
+                new java.util.concurrent.CountDownLatch(1).await();
+            } catch (InterruptedException expected) {
+                openAtStop.set(database.isOpen());
+            } finally {
+                stopped.countDown();
+            }
+            return null;
+        }, (result, error) -> fail("Destroyed activity received a worker callback")));
+        try {
+            assertTrue("Background job started", started.await(5, java.util.concurrent.TimeUnit.SECONDS));
+            ui(main::finish);
+            for (int i = 0; i < 100 && !main.isDestroyed(); i++) {
+                android.os.SystemClock.sleep(50);
+                getInstrumentation().waitForIdleSync();
+            }
+            assertTrue("Activity destruction completed", main.isDestroyed());
+            assertTrue("Background job stopped", stopped.await(5, java.util.concurrent.TimeUnit.SECONDS));
+            assertTrue("Database must stay open until the worker stops", openAtStop.get());
+            assertFalse("Database closes after worker shutdown", database.isOpen());
+        } finally {
+            ui(main::finish);
+        }
+    }
+
     private void ui(Runnable r) {
         getInstrumentation().runOnMainSync(r);
         getInstrumentation().waitForIdleSync();
