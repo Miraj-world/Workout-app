@@ -1,0 +1,19 @@
+
+com.cs533.workoutlog.TabTests:
+Failure in testWorkerStopsBeforeDatabaseCloses:
+junit.framework.AssertionFailedError: Database must stay open until the worker stops
+	at com.cs533.workoutlog.TabTests.testWorkerStopsBeforeDatabaseCloses(TabTests.java:38)
+	at android.test.InstrumentationTestCase.runMethod(InstrumentationTestCase.java:220)
+	at android.test.InstrumentationTestCase.runTest(InstrumentationTestCase.java:205)
+	at android.test.AndroidTestRunner.runTest(AndroidTestRunner.java:195)
+	at android.test.AndroidTestRunner.runTest(AndroidTestRunner.java:181)
+	at android.test.InstrumentationTestRunner.onStart(InstrumentationTestRunner.java:564)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2075)
+
+Test results for InstrumentationTestRunner=.F
+Time: 1.279
+
+FAILURES!!!
+Tests run: 1,  Failures: 1,  Errors: 0
+
+

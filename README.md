@@ -67,6 +67,8 @@ The resource-generation script is retained in `verification/generate_resources.p
 
 ## Device tests
 
+See [testing/README.md](testing/README.md) for the test source map, bug-fix reports, and selected test evidence.
+
 ```powershell
 .\gradlew.bat assembleDebug assembleDebugAndroidTest --offline --no-daemon
 adb install -r .\app\build\outputs\apk\debug\app-debug.apk

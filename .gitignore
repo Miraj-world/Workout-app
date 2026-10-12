@@ -15,3 +15,4 @@ verification/*-ui.xml
 !app/src/main/res/**/*.png
 !app/src/main/res/**/*.jpg
 !app/src/main/res/**/*.webp
+!testing/evidence/**/*.png
